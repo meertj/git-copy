@@ -22,23 +22,24 @@ then
   exit 1
 elif [ $# -gt 3 ];
 then
+  # shellcheck disable=SC2145
   echo "$0: Too many arguments: $@"
   exit 1
 fi
 
-## Check validity of args
+## Check validity of arg 1 - broken
 #if [ -d "$1" ];
 #then
 #  echo "$0: Bad argument: $1 DNE"
 #  exit 1
 #fi
-# Check validity of args
+# Check validity of arg 3
 if [ -d "$3" ];
 then
   echo "$0: Bad argument: $3 DNE"
   exit 1
 fi
-# Check validity of args
+# Check validity of arg 1 + 3
 if [ -e "$original_dir_and_file" ];
 then
   echo "$0: Bad argument: $3 DNE in $1"
@@ -55,7 +56,7 @@ mkdir /tmp/git-migrate-patches
 export target_patches=$3
 
 # Save off these patches
-git format-patch -o /tmp/git-migrate-patches $(git log $target_patches|grep ^commit|tail -1|awk '{print $2}')^..HEAD $target_patches
+git format-patch -o /tmp/git-migrate-patches "$(git log "$target_patches"|grep ^commit|tail -1|awk '{print $2}')"^..HEAD "$target_patches"
 
 # Move to destination location
 cd "$2" || exit 1
